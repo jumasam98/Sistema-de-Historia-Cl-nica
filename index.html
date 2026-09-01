@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOCUMENTOS DE HISTORIA CLÍNICA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    /* PANTALLA DE ACCESO / CLAVE */
+    #lockScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: #1a5276;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+
+    .login-box {
+      background: #ffffff;
+      padding: 30px 35px;
+      border-radius: 10px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      text-align: center;
+      width: 320px;
+    }
+
+    .login-box h3 {
+      margin-top: 0;
+      color: #1a5276;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .login-box p {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .password-field-container {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .login-box input[type="password"],
+    .login-box input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .login-box input:focus {
+      border-color: #1a5276;
+    }
+
+    .show-password-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .show-password-container input[type="checkbox"] {
+      cursor: pointer;
+      width: 15px;
+      height: 15px;
+    }
+
+    .login-box button.btn-login {
+      width: 100%;
+      background-color: #1a5276;
+      color: white;
+      border: none;
+      padding: 11px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .login-box button.btn-login:hover {
+      background-color: #154360;
+    }
+
+    .login-error {
+      color: #e74c3c;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* OCULTAR CONTENIDO PRINCIPAL HASTA AUTENTICAR */
+    #mainApp {
+      display: none;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .print-border {
+      display: none;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #1a5276;
+    }
+
+    .section-title {
+      background: #1a5276;
+      color: white;
+      padding: 6px 12px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-top: 15px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 2fr;
+      gap: 10px;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 3px;
+      color: #555;
+    }
+
+    input[type="text"], input[type="number"], input[type="date"], select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+    }
+
+    .input-required-missing {
+      border: 2px solid #e74c3c !important;
+      background-color: #fdf2e9 !important;
+    }
+
+    .validation-warning {
+      display: none;
+      background-color: #fadbd8;
+      border: 1px solid #e74c3c;
+      color: #78281f;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: bold;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .editable-box {
+      width: 100%;
+      min-height: 40px;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+      background-color: #fff;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      outline: none;
+    }
+
+    .editable-box:focus {
+      border-color: #1a5276;
+      background-color: #fffdf6;
+    }
+
+    .disabled-area {
+      opacity: 0.5;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #1a5276;
+      margin-top: 25px;
+      margin-bottom: 20px;
+    }
+
+    .tab-button {
+      background-color: #eaf2f8;
+      border: none;
+      outline: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      color: #1a5276;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      margin-right: 4px;
+      transition: 0.3s;
+    }
+
+    .tab-button:hover {
+      background-color: #d4e6f1;
+    }
+
+    .tab-button.active {
+      background-color: #1a5276;
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      font-size: 11px;
+    }
+
+    .read-only-letra {
+      background-color: #f9f9f9;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      padding: 8px;
+      min-height: 20px;
+    }
+
+    /* ENCABEZADO Y LOGOS */
+    .doc-header {
+      border-bottom: 2px solid #333;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .doc-header img {
+      height: 60px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .doc-header-text {
+      text-align: center;
+      margin: 0 45px;
+    }
+
+    .doc-header-text h3 {
+      margin: 0;
+      color: #000;
+      font-size: 18px;
+    }
+
+    .doc-header-text p {
+      margin: 2px 0;
+      font-size: 12px;
+    }
+
+    .patient-summary {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 8px 12px;
+      font-size: 12px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+    }
+
+    .tab-title-bar {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+      margin-bottom: 15px;
+    }
+
+    .tab-title-bar h3 {
+      margin: 0;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .btn-print-tab {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-print-tab:hover {
+      background-color: #219150;
+    }
+
+    .btn-print-tab svg {
+      width: 14px;
+      height: 14px;
+      fill: currentColor;
+    }
+
+    /* BOTONES DE ACCIÓN PRINCIPALES */
+    .action-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 15px;
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .btn {
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-print-all { 
+      background-color: #2980b9; 
+    }
+    .btn-print-all:hover { 
+      background-color: #1f618d; 
+    }
+
+    .btn-print-select {
+      background-color: #e67e22;
+    }
+    .btn-print-select:hover {
+      background-color: #d35400;
+    }
+
+    .btn-print-select svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    .print-select-wrapper {
+      position: relative;
+    }
+
+    .print-select-popover {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 8px);
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.18);
+      border-radius: 6px;
+      padding: 12px 15px;
+      width: 220px;
+      z-index: 1000;
+      box-sizing: border-box;
+    }
+
+    .print-select-popover.show {
+      display: block;
+    }
+
+    .print-select-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: #1a5276;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 4px;
+    }
+
+    .print-select-options {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .print-select-options label {
+      font-size: 12px;
+      font-weight: normal;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      margin-bottom: 0;
+    }
+
+    .print-select-options input[type="checkbox"] {
+      width: auto;
+      cursor: pointer;
+    }
+
+    .btn-execute-select {
+      background-color: #e67e22;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 7px;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s;
+    }
+
+    .btn-execute-select:hover {
+      background-color: #d35400;
+    }
+    
+    .btn-add {
+      background-color: #8e44ad;
+      padding: 8px 14px;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+    .btn-add:hover { background-color: #71368a; }
+
+    .btn-remove {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    .btn-remove:hover { background-color: #c0392b; }
+
+    .action-cell {
+      position: relative;
+      text-align: center;
+    }
+
+    .popover-confirm {
+      display: none;
+      position: absolute;
+      right: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-right: 8px;
+      background: #ffffff;
+      border: 1px solid #ccc;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 8px 12px;
+      border-radius: 6px;
+      white-space: nowrap;
+      z-index: 1000;
+      font-size: 12px;
+    }
+
+    .popover-confirm p {
+      margin: 0 0 6px 0;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .popover-buttons {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .btn-pop-ok {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .btn-pop-cancel {
+      background-color: #7f8c8d;
+      color: white;
+      border: none;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    /* SECCIÓN DE FIRMA Y SELLO A 4 CM DE DISTANCIA */
+    .signature-box {
+      margin-top: 4cm;
+      display: flex;
+      justify-content: space-between;
+      page-break-inside: avoid;
+    }
+
+    .signature-line {
+      border-top: 1px solid #000;
+      width: 200px;
+      text-align: center;
+      font-size: 12px;
+      padding-top: 5px;
+    }
+
+    @media print {
+      @page {
+        margin: 0.8cm;
+      }
+
+      body {
+        background-color: #fff;
+        padding: 0;
+        margin: 0;
+      }
+
+      #lockScreen {
+        display: none !important;
+      }
+
+      #mainApp {
+        display: block !important;
+      }
+
+      .container {
+        box-shadow: none;
+        padding: 0;
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .print-border {
+        display: block !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border: 0.5mm solid #444444;
+        border-radius: 7mm;
+        pointer-events: none;
+        box-sizing: border-box;
+        z-index: 9999;
+      }
+
+      .no-print, .tabs, .action-buttons, .master-data, .btn-add, .col-action, .btn-remove, .popover-confirm, .btn-print-tab, .validation-warning, .print-select-popover {
+        display: none !important;
+      }
+
+      body:not(.print-all):not(.print-custom) .tab-content {
+        display: none !important;
+      }
+
+      body:not(.print-all):not(.print-custom) .tab-content.active {
+        display: block !important;
+        padding: 5mm;
+      }
+
+      body.print-all .tab-content {
+        display: block !important;
+        page-break-after: always;
+        padding: 5mm;
+      }
+
+      body.print-all .tab-content:last-child {
+        page-break-after: auto;
+      }
+
+      body.print-custom .tab-content {
+        display: none !important;
+      }
+
+      body.print-custom .tab-content.print-selected {
+        display: block !important;
+        page-break-after: always;
+        padding: 5mm;
+      }
+
+      body.print-custom .tab-content.print-selected:last-of-type {
+        page-break-after: auto;
+      }
+
+      .editable-box {
+        border: none !important;
+        padding: 0 !important;
+        min-height: auto !important;
+        height: auto !important;
+        overflow: visible !important;
+        font-size: 10pt !important;
+      }
+
+      input {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+        font-size: 10pt !important;
+      }
+
+      .read-only-letra {
+        background: transparent !important;
+        padding: 0 !important;
+        font-size: 10pt !important;
+      }
+
+      .tab-title-bar {
+        border-bottom: 1px solid #ccc !important;
+      }
+
+      .signature-box {
+        margin-top: 4cm !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PANTALLA DE ACCESO POR CLAVE -->
+<div id="lockScreen">
+  <div class="login-box">
+    <h3>Acceso Restringido</h3>
+    <p>Ingrese la clave para acceder al sistema de historia clínica:</p>
+    
+    <div class="password-field-container">
+      <input type="password" id="accessPass" placeholder="••••••••" onkeydown="verificarEnter(event)">
+    </div>
+
+    <!-- OPCIÓN MOSTRAR CLAVE -->
+    <label class="show-password-container">
+      <input type="checkbox" id="chkShowPass" onchange="toggleMostrarClave()">
+      <span>Mostrar contraseña</span>
+    </label>
+
+    <button class="btn-login" onclick="validarAcceso()">Ingresar</button>
+    <div id="loginError" class="login-error">⚠️ Clave incorrecta. Intente de nuevo.</div>
+  </div>
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div id="mainApp">
+
+  <div class="print-border"></div>
+
+  <div class="container">
+    
+    <!-- DATOS GENERALES -->
+    <div class="master-data">
+      <h2>Datos de Consulta y Paciente</h2>
+      <div class="section-title">DATOS DEL PROFESIONAL</div>
+      <div class="grid-3">
+        <div>
+          <label>Nombre del Médico/a:</label>
+          <input type="text" id="profNombre" value="Dra. María Camila Poveda López" oninput="syncData()">
+        </div>
+        <div>
+          <label>Especialidad / Cargo:</label>
+          <input type="text" id="profEsp" value="Médica general - Universidad de La Sabana" oninput="syncData()">
+        </div>
+        <div>
+          <label>Registro Médico / Teléfono:</label>
+          <input type="text" id="profInfo" value="RM: 1003826954   Tel: 3007399748" oninput="syncData()">
+        </div>
+      </div>
+
+      <div class="section-title">DATOS DEL PACIENTE</div>
+      <div class="grid-4">
+        <div>
+          <label>Paciente (*):</label>
+          <input type="text" id="pacNombre" placeholder="Nombre completo" oninput="syncData()">
+        </div>
+        <div>
+          <label>Tipo Doc (*):</label>
+          <select id="pacTipoDoc" onchange="syncData()">
+            <option value="">-- Seleccionar --</option>
+            <option value="CC">CC</option>
+            <option value="TI">TI</option>
+            <option value="CE">CE</option>
+            <option value="PASAPORTE">PASAPORTE</option>
+          </select>
+        </div>
+        <div>
+          <label>Número Documento (*):</label>
+          <input type="text" id="pacNumDoc" placeholder="1234567890" oninput="syncData()">
+        </div>
+        <div>
+          <label>EPS (*):</label>
+          <input type="text" id="pacEps" placeholder="Ej: SALUD TOTAL" oninput="syncData()">
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top: 10px;">
+        <div>
+          <label>Fecha de Nacimiento (*):</label>
+          <input type="date" id="pacFechaNac" onchange="calcularEdad()">
+        </div>
+        <div>
+          <label>Edad (Calculada automáticamente):</label>
+          <input type="text" id="pacEdad" placeholder="Ej: 30 años, 2 meses y 5 días" readonly tabindex="-1" style="background-color: #f9f9f9;">
+        </div>
+        <div>
+          <label>Fecha de Consulta (*):</label>
+          <input type="date" id="docFecha" onchange="syncData()">
+        </div>
+      </div>
+    </div>
+
+    <div id="validationWarning" class="validation-warning">
+      ⚠️ Debe diligenciar todos los campos de identificación del paciente (Paciente, Tipo Doc, Número, EPS, Fecha de Nacimiento y Fecha de Consulta) para habilitar la formulación y la impresión.
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn btn-print-all" id="btnPrintAll" onclick="imprimirTodo()">Imprimir Todo el Paquete</button>
+      
+      <!-- CONTENEDOR BOTÓN Y MENÚ IMPRIMIR POR SELECCIÓN -->
+      <div class="print-select-wrapper">
+        <button class="btn btn-print-select" id="btnPrintSelect" onclick="togglePrintSelectMenu(event)">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+          </svg>
+          Imprimir por selección
+        </button>
+
+        <div class="print-select-popover" id="printSelectPopover">
+          <div class="print-select-title">Seleccionar documentos:</div>
+          <div class="print-select-options">
+            <label><input type="checkbox" id="chk_hc" checked> Historia clínica</label>
+            <label><input type="checkbox" id="chk_formula" checked> Fórmula</label>
+            <label><input type="checkbox" id="chk_solicitudes" checked> Solicitudes</label>
+            <label><input type="checkbox" id="chk_certificaciones" checked> Certificado médico</label>
+          </div>
+          <button class="btn-execute-select" onclick="imprimirPorSeleccion()">Imprimir</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="formsContainer">
+
+      <!-- PESTAÑAS -->
+      <div class="tabs">
+        <button class="tab-button active" onclick="openTab(event, 'hc')">Historia Clínica</button>
+        <button class="tab-button" onclick="openTab(event, 'formula')">Fórmula Médica</button>
+        <button class="tab-button" onclick="openTab(event, 'solicitudes')">Solicitudes</button>
+        <button class="tab-button" onclick="openTab(event, 'certificaciones')">Certificado Médico</button>
+      </div>
+
+      <!-- 1. HISTORIA CLÍNICA -->
+      <div id="hc" class="tab-content active">
+        <div class="doc-header">
+          <img src="IMAGENES/logo.png" alt="Logo">
+          <div class="doc-header-text">
+            <h3 class="out-profNombre">Dra. María Camila Poveda López</h3>
+            <p class="out-profEsp">Médica general - Universidad de La Sabana</p>
+            <p class="out-profInfo">RM: 1003826954 Tel: 3007399748</p>
+          </div>
+          <img src="IMAGENES/logo.png" alt="Logo">
+        </div>
+
+        <div class="patient-summary">
+          <strong>Fecha:</strong> <span class="out-Fecha"></span> | 
+          <strong>Paciente:</strong> <span class="out-Paciente"></span> | 
+          <strong>Edad:</strong> <span class="out-Edad"></span> | 
+          <strong>Documento:</strong> <span class="out-DocType"></span> <span class="out-DocNum"></span> | 
+          <strong>EPS:</strong> <span class="out-Eps"></span>
+        </div>
+
+        <div class="tab-title-bar">
+          <h3>HISTORIA CLÍNICA</h3>
+          <button class="btn-print-tab btn-tab-print" onclick="imprimirActual('HISTORIA CLÍNICA')">
+            <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+            Imprimir Historia Clínica
+          </button>
+        </div>
+
+        <label>Motivo de consulta:</label>
+        <div class="editable-box" contenteditable="true"></div>
+
+        <label style="margin-top: 10px;">Enfermedad actual:</label>
+        <div class="editable-box" contenteditable="true" style="min-height: 80px;"></div>
+
+        <label style="margin-top: 10px;">Revisión por sistemas:</label>
+        <div class="editable-box" contenteditable="true"></div>
+
+        <label style="margin-top: 10px;">Examen físico:</label>
+        <div class="editable-box" contenteditable="true" style="min-height: 80px;"></div>
+
+        <label style="margin-top: 10px;">Diagnóstico:</label>
+        <input type="text" id="pacDx" placeholder="Ej: DIARREA VIRAL" oninput="syncData()">
+
+        <label style="margin-top: 10px;">Análisis:</label>
+        <div class="editable-box" contenteditable="true" style="min-height: 80px;"></div>
+
+        <label style="margin-top: 10px;">Plan y Manejo:</label>
+        <div class="editable-box" contenteditable="true" style="min-height: 100px;"></div>
+
+        <div class="signature-box">
+          <div class="signature-line">Firma</div>
+          <div class="signature-line">Sello</div>
+        </div>
+      </div>
+
+      <!-- 2. FÓRMULA MÉDICA -->
+      <div id="formula" class="tab-content">
+        <div class="doc-header">
+          <img src="IMAGENES/logo.png" alt="Logo">
+          <div class="doc-header-text">
+            <h3 class="out-profNombre">Dra. María Camila Poveda López</h3>
+            <p class="out-profEsp">Médica general - Universidad de La Sabana</p>
+            <p class="out-profInfo">RM: 1003826954 Tel: 3007399748</p>
+          </div>
+          <img src="IMAGENES/logo.png" alt="Logo">
+        </div>
+
+        <div class="patient-summary">
+          <strong>Fecha:</strong> <span class="out-Fecha"></span> | 
+          <strong>Paciente:</strong> <span class="out-Paciente"></span> | 
+          <strong>Documento:</strong> <span class="out-DocType"></span> <span class="out-DocNum"></span> | 
+          <strong>EPS:</strong> <span class="out-Eps"></span><br>
+          <strong>Edad:</strong> <span class="out-Edad"></span> | 
+          <strong>Diagnóstico:</strong> <span class="out-Dx"></span>
+        </div>
+
+        <div class="tab-title-bar">
+          <h3>FÓRMULA MÉDICA</h3>
+          <button class="btn-print-tab btn-tab-print" onclick="imprimirActual('FÓRMULA MÉDICA')">
+            <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+            Imprimir Fórmula
+          </button>
+        </div>
+
+        <table id="tablaFormula">
+          <thead>
+            <tr>
+              <th rowspan="2" style="width: 4%;">#</th>
+              <th rowspan="2" style="width: 53%;">NOMBRE GENÉRICO / FORMA FARMACÉUTICA / CONCENTRACIÓN / DOSIS<br>VÍA Y FRECUENCIA DE ADMINISTRACIÓN / TIEMPO DE TRATAMIENTO</th>
+              <th colspan="2" style="text-align: center; width: 38%;">CANTIDAD</th>
+              <th rowspan="2" style="width: 5%;" class="col-action"></th>
+            </tr>
+            <tr>
+              <th style="width: 15%; text-align: center;">NUMERO</th>
+              <th style="width: 23%; text-align: center;">LETRA</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyFormula"></tbody>
+        </table>
+
+        <button class="btn btn-add" id="btnAddMed" onclick="agregarMedicamento()">+ Agregar Medicamento</button>
+
+        <div class="signature-box">
+          <div class="signature-line">Firma</div>
+          <div class="signature-line">Sello</div>
+        </div>
+      </div>
+
+      <!-- 3. SOLICITUDES -->
+      <div id="solicitudes" class="tab-content">
+        <div class="doc-header">
+          <img src="IMAGENES/logo.png" alt="Logo">
+          <div class="doc-header-text">
+            <h3 class="out-profNombre">Dra. María Camila Poveda López</h3>
+            <p class="out-profEsp">Médica general - Universidad de La Sabana</p>
+            <p class="out-profInfo">RM: 1003826954 Tel: 3007399748</p>
+          </div>
+          <img src="IMAGENES/logo.png" alt="Logo">
+        </div>
+
+        <div class="patient-summary">
+          <strong>Fecha:</strong> <span class="out-Fecha"></span> | 
+          <strong>Paciente:</strong> <span class="out-Paciente"></span> | 
+          <strong>Edad:</strong> <span class="out-Edad"></span> | 
+          <strong>Documento:</strong> <span class="out-DocType"></span> <span class="out-DocNum"></span> | 
+          <strong>EPS:</strong> <span class="out-Eps"></span>
+        </div>
+
+        <div class="tab-title-bar">
+          <h3>SOLICITUD DE EXÁMENES / PARACLÍNICOS</h3>
+          <button class="btn-print-tab btn-tab-print" onclick="imprimirActual('SOLICITUD DE EXÁMENES')">
+            <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+            Imprimir Solicitud
+          </button>
+        </div>
+
+        <label>Órdenes y Exámenes Solicitados:</label>
+        <div class="editable-box" contenteditable="true" style="min-height: 250px;"></div>
+
+        <div class="signature-box">
+          <div class="signature-line">Firma</div>
+          <div class="signature-line">Sello</div>
+        </div>
+      </div>
+
+      <!-- 4. CERTIFICACIONES -->
+      <div id="certificaciones" class="tab-content">
+        <div class="doc-header">
+          <img src="IMAGENES/logo.png" alt="Logo">
+          <div class="doc-header-text">
+            <h3 class="out-profNombre">Dra. María Camila Poveda López</h3>
+            <p class="out-profEsp">Médica general - Universidad de La Sabana</p>
+            <p class="out-profInfo">RM: 1003826954 Tel: 3007399748</p>
+          </div>
+          <img src="IMAGENES/logo.png" alt="Logo">
+        </div>
+
+        <div class="patient-summary">
+          <strong>Fecha:</strong> <span class="out-Fecha"></span> | 
+          <strong>Paciente:</strong> <span class="out-Paciente"></span> | 
+          <strong>Edad:</strong> <span class="out-Edad"></span> | 
+          <strong>Documento:</strong> <span class="out-DocType"></span> <span class="out-DocNum"></span> | 
+          <strong>EPS:</strong> <span class="out-Eps"></span>
+        </div>
+
+        <div class="tab-title-bar">
+          <h3>CERTIFICADO MÉDICO</h3>
+          <button class="btn-print-tab btn-tab-print" onclick="imprimirActual('CERTIFICADO MÉDICO')">
+            <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+            Imprimir Certificado
+          </button>
+        </div>
+
+        <label>Detalle del Certificado / Incapacidad / Recomendaciones:</label>
+        <div class="editable-box" contenteditable="true" style="min-height: 220px;"></div>
+
+        <div class="signature-box">
+          <div class="signature-line">Firma</div>
+          <div class="signature-line">Sello</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // CLAVE DE ACCESO
+  const CLAVE_CORRECTA = "futuro321";
+
+  // VERIFICAR AUTENTICACIÓN AL CREGAR LA PÁGINA
+  window.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem('authenticated') === 'true') {
+      desbloquearAcceso();
+    } else {
+      document.getElementById('accessPass').focus();
+    }
+  });
+
+  // MOSTRAR / OCULTAR CONTRASEÑA
+  function toggleMostrarClave() {
+    const passInput = document.getElementById('accessPass');
+    const chkShow = document.getElementById('chkShowPass');
+    passInput.type = chkShow.checked ? 'text' : 'password';
+  }
+
+  function validarAcceso() {
+    const passInput = document.getElementById('accessPass');
+    const errorMsg = document.getElementById('loginError');
+
+    if (passInput.value === CLAVE_CORRECTA) {
+      sessionStorage.setItem('authenticated', 'true');
+      desbloquearAcceso();
+    } else {
+      errorMsg.style.display = 'block';
+      passInput.value = '';
+      passInput.focus();
+    }
+  }
+
+  function verificarEnter(e) {
+    if (e.key === 'Enter') {
+      validarAcceso();
+    }
+  }
+
+  function desbloquearAcceso() {
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+  }
+
+  document.getElementById('docFecha').valueAsDate = new Date();
+
+  function validarCamposIdentificacion() {
+    const requiredFields = [
+      { id: 'pacNombre', el: document.getElementById('pacNombre') },
+      { id: 'pacTipoDoc', el: document.getElementById('pacTipoDoc') },
+      { id: 'pacNumDoc', el: document.getElementById('pacNumDoc') },
+      { id: 'pacEps', el: document.getElementById('pacEps') },
+      { id: 'pacFechaNac', el: document.getElementById('pacFechaNac') },
+      { id: 'docFecha', el: document.getElementById('docFecha') }
+    ];
+
+    let todosValidos = true;
+
+    requiredFields.forEach(field => {
+      const val = field.el.value.trim();
+      if (!val) {
+        field.el.classList.add('input-required-missing');
+        todosValidos = false;
+      } else {
+        field.el.classList.remove('input-required-missing');
+      }
+    });
+
+    const formsContainer = document.getElementById('formsContainer');
+    const warning = document.getElementById('validationWarning');
+    const btnPrintAll = document.getElementById('btnPrintAll');
+    const btnPrintSelect = document.getElementById('btnPrintSelect');
+    const printTabBtns = document.querySelectorAll('.btn-tab-print');
+
+    if (todosValidos) {
+      formsContainer.classList.remove('disabled-area');
+      warning.style.display = 'none';
+      btnPrintAll.disabled = false;
+      btnPrintAll.style.opacity = '1';
+      btnPrintAll.style.cursor = 'pointer';
+      
+      btnPrintSelect.disabled = false;
+      btnPrintSelect.style.opacity = '1';
+      btnPrintSelect.style.cursor = 'pointer';
+
+      printTabBtns.forEach(b => {
+        b.disabled = false;
+        b.style.opacity = '1';
+        b.style.cursor = 'pointer';
+      });
+    } else {
+      formsContainer.classList.add('disabled-area');
+      warning.style.display = 'block';
+      btnPrintAll.disabled = true;
+      btnPrintAll.style.opacity = '0.5';
+      btnPrintAll.style.cursor = 'not-allowed';
+
+      btnPrintSelect.disabled = true;
+      btnPrintSelect.style.opacity = '0.5';
+      btnPrintSelect.style.cursor = 'not-allowed';
+
+      printTabBtns.forEach(b => {
+        b.disabled = true;
+        b.style.opacity = '0.5';
+        b.style.cursor = 'not-allowed';
+      });
+    }
+
+    return todosValidos;
+  }
+
+  function calcularEdad() {
+    const nacVal = document.getElementById('pacFechaNac').value;
+    const consultaVal = document.getElementById('docFecha').value;
+    
+    if (!nacVal) {
+      document.getElementById('pacEdad').value = '';
+      syncData();
+      return;
+    }
+
+    const fechaNac = new Date(nacVal + 'T00:00:00');
+    const fechaRef = consultaVal ? new Date(consultaVal + 'T00:00:00') : new Date();
+
+    if (isNaN(fechaNac.getTime())) return;
+
+    let anos = fechaRef.getFullYear() - fechaNac.getFullYear();
+    let meses = fechaRef.getMonth() - fechaNac.getMonth();
+    let dias = fechaRef.getDate() - fechaNac.getDate();
+
+    if (dias < 0) {
+      meses--;
+      const ultimoDiaMesAnterior = new Date(fechaRef.getFullYear(), fechaRef.getMonth(), 0).getDate();
+      dias += ultimoDiaMesAnterior;
+    }
+
+    if (meses < 0) {
+      anos--;
+      meses += 12;
+    }
+
+    let resultado = [];
+    if (anos > 0) resultado.push(`${anos} ${anos === 1 ? 'año' : 'años'}`);
+    if (meses > 0) resultado.push(`${meses} ${meses === 1 ? 'mes' : 'meses'}`);
+    if (dias > 0 || resultado.length === 0) resultado.push(`${dias} ${dias === 1 ? 'día' : 'días'}`);
+
+    let textoEdad = "";
+    if (resultado.length === 1) {
+      textoEdad = resultado[0];
+    } else if (resultado.length === 2) {
+      textoEdad = resultado.join(" y ");
+    } else if (resultado.length === 3) {
+      textoEdad = `${resultado[0]}, ${resultado[1]} y ${resultado[2]}`;
+    }
+
+    document.getElementById('pacEdad').value = textoEdad;
+    syncData();
+  }
+
+  function syncData() {
+    validarCamposIdentificacion();
+
+    const profNombre = document.getElementById('profNombre').value;
+    const profEsp = document.getElementById('profEsp').value;
+    const profInfo = document.getElementById('profInfo').value;
+
+    const pacNombre = document.getElementById('pacNombre').value;
+    const pacTipoDoc = document.getElementById('pacTipoDoc').value;
+    const pacNumDoc = document.getElementById('pacNumDoc').value;
+    const pacEps = document.getElementById('pacEps').value;
+    const pacEdad = document.getElementById('pacEdad').value;
+    const pacDx = document.getElementById('pacDx').value;
+    const docFecha = document.getElementById('docFecha').value;
+
+    document.querySelectorAll('.out-profNombre').forEach(el => el.textContent = profNombre);
+    document.querySelectorAll('.out-profEsp').forEach(el => el.textContent = profEsp);
+    document.querySelectorAll('.out-profInfo').forEach(el => el.textContent = profInfo);
+
+    document.querySelectorAll('.out-Paciente').forEach(el => el.textContent = pacNombre);
+    document.querySelectorAll('.out-DocType').forEach(el => el.textContent = pacTipoDoc);
+    document.querySelectorAll('.out-DocNum').forEach(el => el.textContent = pacNumDoc);
+    document.querySelectorAll('.out-Eps').forEach(el => el.textContent = pacEps);
+    document.querySelectorAll('.out-Edad').forEach(el => el.textContent = pacEdad);
+    document.querySelectorAll('.out-Dx').forEach(el => el.textContent = pacDx);
+    document.querySelectorAll('.out-Fecha').forEach(el => el.textContent = docFecha);
+  }
+
+  function openTab(evt, tabName) {
+    let i, tabcontent, tabbuttons;
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].classList.remove("active");
+    }
+    tabbuttons = document.getElementsByClassName("tab-button");
+    for (i = 0; i < tabbuttons.length; i++) {
+      tabbuttons[i].classList.remove("active");
+    }
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.classList.add("active");
+  }
+
+  function ejecutarImpresionLimpia(tituloDoc) {
+    if (!validarCamposIdentificacion()) return;
+
+    const originalTitle = document.title;
+    document.title = tituloDoc || "DOCUMENTOS DE HISTORIA CLÍNICA";
+
+    try {
+      history.pushState(null, "", " ");
+    } catch(e){}
+
+    window.print();
+
+    setTimeout(() => {
+      document.title = originalTitle;
+    }, 500);
+  }
+
+  function imprimirActual(subtitulo) {
+    document.body.classList.remove('print-all', 'print-custom');
+    ejecutarImpresionLimpia("DOCUMENTOS DE HISTORIA CLÍNICA" + (subtitulo ? " - " + subtitulo : ""));
+  }
+
+  function imprimirTodo() {
+    document.body.classList.remove('print-custom');
+    document.body.classList.add('print-all');
+    ejecutarImpresionLimpia("DOCUMENTOS DE HISTORIA CLÍNICA");
+    document.body.classList.remove('print-all');
+  }
+
+  function togglePrintSelectMenu(e) {
+    e.stopPropagation();
+    const pop = document.getElementById('printSelectPopover');
+    pop.classList.toggle('show');
+  }
+
+  document.addEventListener('click', function(e) {
+    const pop = document.getElementById('printSelectPopover');
+    const btn = document.getElementById('btnPrintSelect');
+    if (pop && !pop.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+      pop.classList.remove('show');
+    }
+  });
+
+  function imprimirPorSeleccion() {
+    if (!validarCamposIdentificacion()) return;
+
+    const chkHc = document.getElementById('chk_hc').checked;
+    const chkFormula = document.getElementById('chk_formula').checked;
+    const chkSolicitudes = document.getElementById('chk_solicitudes').checked;
+    const chkCertificaciones = document.getElementById('chk_certificaciones').checked;
+
+    if (!chkHc && !chkFormula && !chkSolicitudes && !chkCertificaciones) {
+      alert("Por favor seleccione al menos un documento para imprimir.");
+      return;
+    }
+
+    document.getElementById('hc').classList.toggle('print-selected', chkHc);
+    document.getElementById('formula').classList.toggle('print-selected', chkFormula);
+    document.getElementById('solicitudes').classList.toggle('print-selected', chkSolicitudes);
+    document.getElementById('certificaciones').classList.toggle('print-selected', chkCertificaciones);
+
+    document.getElementById('printSelectPopover').classList.remove('show');
+
+    document.body.classList.remove('print-all');
+    document.body.classList.add('print-custom');
+    
+    ejecutarImpresionLimpia("DOCUMENTOS SELECCIONADOS");
+
+    document.body.classList.remove('print-custom');
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('print-selected'));
+  }
+
+  function numeroALetras(num) {
+    if (num === "" || isNaN(num)) return "";
+    let n = parseInt(num, 10);
+    if (n === 0) return "CERO";
+
+    const unidades = ["", "UNO", "DOS", "TRES", "CUATRO", "CINCO", "SEIS", "SIETE", "OCHO", "NUEVE", "DIEZ", "ONCE", "DOCE", "TRECE", "CATORCE", "QUINCE", "DIECISÉIS", "DIECISIETE", "DIECIOCHO", "DIECINUEVE", "VEINTE", "VEINTIUNO", "VEINTIDÓS", "VEINTITRÉS", "VEINTICUATRO", "VEINTICINCO", "VEINTISIETE", "VEINTIUNO", "VEINTIDÓS", "VEINTITRÉS", "VEINTICUATRO", "VEINTICINCO", "VEINTISEÍS", "VEINTISIETE", "VEINTIOCHO", "VEINTINUEVE"];
+    const decenas = ["", "", "", "TREINTA", "CUARENTA", "CINCUENTA", "SESENTA", "SETENTA", "OCHENTA", "NOVENTA"];
+    const cientos = ["", "CIEN", "DOSCIENTOS", "TRESCIENTOS", "CUATROCIENTOS", "QUINIENTOS", "SEISCIENTOS", "SETECIENTOS", "OCHOCIENTOS", "NOVECIENTOS"];
+
+    if (n <= 29) return unidades[n];
+
+    if (n < 100) {
+      let u = n % 10;
+      let d = Math.floor(n / 10);
+      return u === 0 ? decenas[d] : decenas[d] + " Y " + unidades[u];
+    }
+
+    if (n === 100) return "CIEN";
+
+    if (n < 1000) {
+      let c = Math.floor(n / 100);
+      let resto = n % 100;
+      let cTexto = (c === 1 && resto > 0) ? "CIENTO" : cientos[c];
+      return resto === 0 ? cTexto : cTexto + " " + numeroALetras(resto);
+    }
+
+    return num.toString();
+  }
+
+  function convertirNumeroALetras(inputEl, targetId) {
+    const val = inputEl.value;
+    const target = document.getElementById(targetId);
+    target.textContent = numeroALetras(val);
+  }
+
+  let medCount = 0;
+
+  function agregarMedicamento() {
+    medCount++;
+    const tbody = document.getElementById('tbodyFormula');
+    const tr = document.createElement('tr');
+    tr.id = `medRow_${medCount}`;
+    
+    tr.innerHTML = `
+      <td class="row-index"></td>
+      <td><div class="editable-box" contenteditable="true"></div></td>
+      <td><input type="number" oninput="convertirNumeroALetras(this, 'letra_${medCount}')" placeholder="Ej: 1"></td>
+      <td><div id="letra_${medCount}" class="read-only-letra"></div></td>
+      <td class="col-action action-cell">
+        <button class="btn-remove" onclick="mostrarConfirmacion('${tr.id}')">✕</button>
+        <div class="popover-confirm" id="popover_${tr.id}">
+          <p>¿Desea eliminar este medicamento?</p>
+          <div class="popover-buttons">
+            <button class="btn-pop-ok" onclick="confirmarEliminar('${tr.id}')">Continuar</button>
+            <button class="btn-pop-cancel" onclick="ocultarConfirmacion('${tr.id}')">Cancelar</button>
+          </div>
+        </div>
+      </td>
+    `;
+    
+    tbody.appendChild(tr);
+    renumerarFilas();
+  }
+
+  function mostrarConfirmacion(rowId) {
+    document.querySelectorAll('.popover-confirm').forEach(el => el.style.display = 'none');
+    const pop = document.getElementById(`popover_${rowId}`);
+    if (pop) pop.style.display = 'block';
+  }
+
+  function ocultarConfirmacion(rowId) {
+    const pop = document.getElementById(`popover_${rowId}`);
+    if (pop) pop.style.display = 'none';
+  }
+
+  function confirmarEliminar(rowId) {
+    const row = document.getElementById(rowId);
+    if (row) {
+      row.remove();
+      renumerarFilas();
+    }
+  }
+
+  function renumerarFilas() {
+    const rows = document.querySelectorAll('#tbodyFormula tr');
+    rows.forEach((row, index) => {
+      row.querySelector('.row-index').textContent = index + 1;
+    });
+  }
+
+  agregarMedicamento();
+  syncData();
+</script>
+
+</body>
+</html>
