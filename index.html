@@ -565,19 +565,35 @@
       cursor: pointer;
     }
 
-    /* SECCIÓN DE FIRMA Y SELLO A 4 CM DE DISTANCIA */
+    /* SECCIÓN DE FIRMA Y SELLO CON IMÁGENES INTEGRADAS */
     .signature-box {
-      margin-top: 4cm;
+      margin-top: 3cm;
       display: flex;
-      justify-content: space-between;
+      justify-content: space-around;
+      align-items: flex-end;
       page-break-inside: avoid;
+    }
+
+    .signature-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 220px;
+    }
+
+    .signature-img {
+      max-height: 70px;
+      max-width: 180px;
+      object-fit: contain;
+      margin-bottom: 2px;
     }
 
     .signature-line {
       border-top: 1px solid #000;
-      width: 200px;
+      width: 100%;
       text-align: center;
       font-size: 12px;
+      font-weight: bold;
       padding-top: 5px;
     }
 
@@ -685,7 +701,7 @@
       }
 
       .signature-box {
-        margin-top: 4cm !important;
+        margin-top: 3cm !important;
       }
     }
   </style>
@@ -870,8 +886,14 @@
         <div class="editable-box" contenteditable="true" style="min-height: 100px;"></div>
 
         <div class="signature-box">
-          <div class="signature-line">Firma</div>
-          <div class="signature-line">Sello</div>
+          <div class="signature-item">
+            <img src="IMAGENES/firmacamila.png" alt="Firma" class="signature-img">
+            <div class="signature-line">Firma</div>
+          </div>
+          <div class="signature-item">
+            <img src="IMAGENES/sellocamila.png" alt="Sello" class="signature-img">
+            <div class="signature-line">Sello</div>
+          </div>
         </div>
       </div>
 
@@ -923,8 +945,14 @@
         <button class="btn btn-add" id="btnAddMed" onclick="agregarMedicamento()">+ Agregar Medicamento</button>
 
         <div class="signature-box">
-          <div class="signature-line">Firma</div>
-          <div class="signature-line">Sello</div>
+          <div class="signature-item">
+            <img src="IMAGENES/firmacamila.png" alt="Firma" class="signature-img">
+            <div class="signature-line">Firma</div>
+          </div>
+          <div class="signature-item">
+            <img src="IMAGENES/sellocamila.png" alt="Sello" class="signature-img">
+            <div class="signature-line">Sello</div>
+          </div>
         </div>
       </div>
 
@@ -960,8 +988,14 @@
         <div class="editable-box" contenteditable="true" style="min-height: 250px;"></div>
 
         <div class="signature-box">
-          <div class="signature-line">Firma</div>
-          <div class="signature-line">Sello</div>
+          <div class="signature-item">
+            <img src="IMAGENES/firmacamila.png" alt="Firma" class="signature-img">
+            <div class="signature-line">Firma</div>
+          </div>
+          <div class="signature-item">
+            <img src="IMAGENES/sellocamila.png" alt="Sello" class="signature-img">
+            <div class="signature-line">Sello</div>
+          </div>
         </div>
       </div>
 
@@ -997,8 +1031,14 @@
         <div class="editable-box" contenteditable="true" style="min-height: 220px;"></div>
 
         <div class="signature-box">
-          <div class="signature-line">Firma</div>
-          <div class="signature-line">Sello</div>
+          <div class="signature-item">
+            <img src="IMAGENES/firmacamila.png" alt="Firma" class="signature-img">
+            <div class="signature-line">Firma</div>
+          </div>
+          <div class="signature-item">
+            <img src="IMAGENES/sellocamila.png" alt="Sello" class="signature-img">
+            <div class="signature-line">Sello</div>
+          </div>
         </div>
       </div>
 
