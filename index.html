@@ -1207,6 +1207,15 @@
     syncData();
   }
 
+  function formatearFecha(fechaStr) {
+    if (!fechaStr) return '';
+    const partes = fechaStr.split('-');
+    if (partes.length === 3) {
+      return `${partes[2]}-${partes[1]}-${partes[0]}`;
+    }
+    return fechaStr;
+  }
+
   function syncData() {
     validarCamposIdentificacion();
 
@@ -1222,6 +1231,8 @@
     const pacDx = document.getElementById('pacDx').value;
     const docFecha = document.getElementById('docFecha').value;
 
+    const fechaFormateada = formatearFecha(docFecha);
+
     document.querySelectorAll('.out-profNombre').forEach(el => el.textContent = profNombre);
     document.querySelectorAll('.out-profEsp').forEach(el => el.textContent = profEsp);
     document.querySelectorAll('.out-profInfo').forEach(el => el.textContent = profInfo);
@@ -1232,7 +1243,7 @@
     document.querySelectorAll('.out-Eps').forEach(el => el.textContent = pacEps);
     document.querySelectorAll('.out-Edad').forEach(el => el.textContent = pacEdad);
     document.querySelectorAll('.out-Dx').forEach(el => el.textContent = pacDx);
-    document.querySelectorAll('.out-Fecha').forEach(el => el.textContent = docFecha);
+    document.querySelectorAll('.out-Fecha').forEach(el => el.textContent = fechaFormateada);
   }
 
   function openTab(evt, tabName) {
