@@ -13,7 +13,6 @@
       color: #333;
     }
 
-    /* PANTALLA DE ACCESO / CLAVE */
     #lockScreen {
       position: fixed;
       top: 0;
@@ -114,7 +113,6 @@
       display: none;
     }
 
-    /* OCULTAR CONTENIDO PRINCIPAL HASTA AUTENTICAR */
     #mainApp {
       display: none;
     }
@@ -290,7 +288,6 @@
       min-height: 20px;
     }
 
-    /* ENCABEZADO Y LOGOS */
     .doc-header {
       border-bottom: 2px solid #333;
       padding-bottom: 10px;
@@ -376,7 +373,6 @@
       fill: currentColor;
     }
 
-    /* BOTONES DE ACCIÓN PRINCIPALES */
     .action-buttons {
       display: flex;
       justify-content: flex-end;
@@ -565,7 +561,6 @@
       cursor: pointer;
     }
 
-    /* SECCIÓN DE FIRMA Y SELLO CON IMÁGENES INTEGRADAS */
     .signature-box {
       margin-top: 3cm;
       display: flex;
@@ -708,7 +703,6 @@
 </head>
 <body>
 
-<!-- PANTALLA DE ACCESO POR CLAVE -->
 <div id="lockScreen">
   <div class="login-box">
     <h3>Acceso Restringido</h3>
@@ -718,7 +712,6 @@
       <input type="password" id="accessPass" placeholder="••••••••" onkeydown="verificarEnter(event)">
     </div>
 
-    <!-- OPCIÓN MOSTRAR CLAVE -->
     <label class="show-password-container">
       <input type="checkbox" id="chkShowPass" onchange="toggleMostrarClave()">
       <span>Mostrar contraseña</span>
@@ -729,14 +722,12 @@
   </div>
 </div>
 
-<!-- CONTENIDO PRINCIPAL -->
 <div id="mainApp">
 
   <div class="print-border"></div>
 
   <div class="container">
     
-    <!-- DATOS GENERALES -->
     <div class="master-data">
       <h2>Datos de Consulta y Paciente</h2>
       <div class="section-title">DATOS DEL PROFESIONAL</div>
@@ -804,7 +795,6 @@
     <div class="action-buttons">
       <button class="btn btn-print-all" id="btnPrintAll" onclick="imprimirTodo()">Imprimir Todo el Paquete</button>
       
-      <!-- CONTENEDOR BOTÓN Y MENÚ IMPRIMIR POR SELECCIÓN -->
       <div class="print-select-wrapper">
         <button class="btn btn-print-select" id="btnPrintSelect" onclick="togglePrintSelectMenu(event)">
           <svg viewBox="0 0 24 24">
@@ -828,7 +818,6 @@
 
     <div id="formsContainer">
 
-      <!-- PESTAÑAS -->
       <div class="tabs">
         <button class="tab-button active" onclick="openTab(event, 'hc')">Historia Clínica</button>
         <button class="tab-button" onclick="openTab(event, 'formula')">Fórmula Médica</button>
@@ -1048,10 +1037,8 @@
 </div>
 
 <script>
-  // CLAVE DE ACCESO
   const CLAVE_CORRECTA = "futuro321";
 
-  // VERIFICAR AUTENTICACIÓN AL CREGAR LA PÁGINA
   window.addEventListener('DOMContentLoaded', () => {
     if (sessionStorage.getItem('authenticated') === 'true') {
       desbloquearAcceso();
@@ -1060,7 +1047,6 @@
     }
   });
 
-  // MOSTRAR / OCULTAR CONTRASEÑA
   function toggleMostrarClave() {
     const passInput = document.getElementById('accessPass');
     const chkShow = document.getElementById('chkShowPass');
@@ -1092,7 +1078,15 @@
     document.getElementById('mainApp').style.display = 'block';
   }
 
-  document.getElementById('docFecha').valueAsDate = new Date();
+  // ASIGNAR FECHA INICIAL EN ZONA HORARIA COLOMBIA (America/Bogota)
+  const hoyColombia = new Intl.DateTimeFormat('fr-CA', {
+    timeZone: 'America/Bogota',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date());
+
+  document.getElementById('docFecha').value = hoyColombia;
 
   function validarCamposIdentificacion() {
     const requiredFields = [
